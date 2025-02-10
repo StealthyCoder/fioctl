@@ -20,7 +20,7 @@ var (
 )
 
 func init() {
-	var tagCmd = &cobra.Command{
+	tagCmd := &cobra.Command{
 		Use:   "tag <target> [<target>...]",
 		Short: "Apply a comma separated list of tags to one or more Targets.",
 		Example: `
@@ -78,6 +78,8 @@ func doTag(cmd *cobra.Command, args []string) {
 					targetTags := tags
 					if tagAppend {
 						targetTags = Set(custom.Tags, tags)
+					} else if len(targetTags) == 0 {
+						subcommands.DieNotNil(fmt.Errorf("Cannot change tags from %s -> %s. Empty values are not allowed.", custom.Tags, targetTags))
 					}
 					updates[name] = client.UpdateTarget{
 						Custom: client.TufCustom{Tags: targetTags},
@@ -98,6 +100,8 @@ func doTag(cmd *cobra.Command, args []string) {
 				targetTags := tags
 				if tagAppend {
 					targetTags = Set(custom.Tags, tags)
+				} else if len(targetTags) == 0 {
+					subcommands.DieNotNil(fmt.Errorf("Cannot change tags from %s -> %s. Empty values are not allowed.", custom.Tags, targetTags))
 				}
 				updates[name] = client.UpdateTarget{
 					Custom: client.TufCustom{Tags: targetTags},
